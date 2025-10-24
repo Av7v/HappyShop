@@ -10,6 +10,7 @@ import javafx.application.Application;
  *
  * @author Shine Shan University of Brighton
  * @version 1.0
+ *
  */
 
 public class Launcher  {
