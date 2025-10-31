@@ -30,15 +30,16 @@ public class CustomerClient extends Application {
         CustomerController cusController = new CustomerController();
         CustomerModel cusModel = new CustomerModel();
         DatabaseRW databaseRW = DatabaseRWFactory.createDatabaseRW();
+        RemoveProductNotifier removeProductNotifier = new RemoveProductNotifier();
+
 
         cusView.cusController = cusController;
         cusController.cusModel = cusModel;
         cusModel.cusView = cusView;
         cusModel.databaseRW = databaseRW;
-        cusView.start(window);
+        removeProductNotifier.cusView = cusView;
+        cusModel.removeProductNotifier = removeProductNotifier;
 
-        //RemoveProductNotifier removeProductNotifier = new RemoveProductNotifier();
-        //removeProductNotifier.cusView = cusView;
-        //cusModel.removeProductNotifier = removeProductNotifier;
+        cusView.start(window);
     }
 }
