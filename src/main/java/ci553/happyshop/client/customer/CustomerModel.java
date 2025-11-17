@@ -133,7 +133,6 @@ public class CustomerModel {
                 for (Product p : insufficientProducts) {
                     trolley.remove(p);
                 }
-                removeProductNotifier.cusView = cusView;
                 removeProductNotifier.showRemovalMsg(errorMsg.toString());
                 // Update trolley display
                 displayTaTrolley = ProductListFormatter.buildString(trolley);

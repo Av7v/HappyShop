@@ -41,5 +41,9 @@ public class CustomerClient extends Application {
         cusModel.removeProductNotifier = removeProductNotifier;
 
         cusView.start(window);
+
+        removeProductNotifier.cusView = cusView;
+        cusModel.removeProductNotifier = removeProductNotifier;
+
     }
 }
