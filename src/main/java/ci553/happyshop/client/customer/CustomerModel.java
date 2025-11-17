@@ -137,8 +137,6 @@ public class CustomerModel {
                 removeProductNotifier.showRemovalMsg(errorMsg.toString());
                 // Update trolley display
                 displayTaTrolley = ProductListFormatter.buildString(trolley);
-                // Close the notifier window
-                removeProductNotifier.closeNotifierWindow();
                 System.out.println("stock is not enough");
             }
         }
