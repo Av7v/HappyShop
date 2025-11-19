@@ -24,7 +24,7 @@ public class CustomerModel {
     public CustomerView cusView;
     public DatabaseRW databaseRW; //Interface type, not specific implementation
                                   //Benefits: Flexibility: Easily change the database implementation.
-    public RemoveProductNotifier removeProductNotifier; //TODO:
+    public RemoveProductNotifier removeProductNotifier;
 
     private ArrayList<Product> products =null; // Array list of found products
     private Product theProduct = null;
@@ -133,9 +133,10 @@ public class CustomerModel {
                 for (Product p : insufficientProducts) {
                     trolley.remove(p);
                 }
-                removeProductNotifier.showRemovalMsg(errorMsg.toString());
                 // Update trolley display
                 displayTaTrolley = ProductListFormatter.buildString(trolley);
+                removeProductNotifier.showRemovalMsg(errorMsg.toString());
+
                 System.out.println("stock is not enough");
             }
         }
