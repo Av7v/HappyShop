@@ -46,8 +46,10 @@ public class Main extends Application {
     //starts the system
     @Override
     public void start(Stage window) throws IOException {
-        sound = new Media(new File("src/main/resources/select-button-ui-395763.mp3").toURI().toString());
+        sound = new Media(new File("src/main/resources/jazz-background-music-426859.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setVolume(0.3);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaPlayer.play();
 
         startCustomerClient();

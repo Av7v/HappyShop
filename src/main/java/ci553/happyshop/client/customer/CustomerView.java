@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -53,8 +52,9 @@ public class CustomerView {
     // Holds a reference to this CustomerView window for future access and management
     // (e.g., positioning the removeProductNotifier when needed).
     private Stage viewWindow;
-    Media sound ;
-    MediaPlayer mediaPlayer;
+    private Media sound;
+    private MediaPlayer mediaPlayer;
+    private String style =UIStyle.rootStyleColorful;
 
     public void start(Stage window) {
         sound = new Media(new File("src/main/resources/select-button-ui-395763.mp3").toURI().toString());
@@ -73,7 +73,7 @@ public class CustomerView {
 
         hbRoot = new HBox(10, vbSearchPage, lineContainer, vbTrolleyPage); //initialize to show trolleyPage
         hbRoot.setAlignment(Pos.CENTER);
-        hbRoot.setStyle(UIStyle.rootStyle);
+        hbRoot.setStyle(UIStyle.rootStyleColorful);
 
         Scene scene = new Scene(hbRoot, WIDTH, HEIGHT);
         window.setScene(scene);
@@ -132,6 +132,19 @@ public class CustomerView {
     }
 
     private VBox CreateTrolleyPage() {
+        Button btnColor = new Button("Change Theme");
+        btnColor.setStyle(UIStyle.grayFillBtnStyle);
+        btnColor.setPrefWidth(150);
+        btnColor.setOnAction(e -> {
+            if (style.equals(UIStyle.rootStyleColorful)) {
+                style = UIStyle.rootStyleDark;
+            } else if (style.equals(UIStyle.rootStyleDark)) {
+                style = UIStyle.rootStyleLight;
+            } else {
+                style = UIStyle.rootStyleColorful;
+            }
+            viewWindow.getScene().getRoot().setStyle(style);
+        });
         Label laPageTitle = new Label("🛒🛒  Trolley 🛒🛒");
         laPageTitle.setStyle(UIStyle.labelTitleStyle);
 
@@ -151,7 +164,7 @@ public class CustomerView {
         hbBtns.setStyle("-fx-padding: 15px;");
         hbBtns.setAlignment(Pos.CENTER);
 
-        vbTrolleyPage = new VBox(15, laPageTitle, taTrolley, hbBtns);
+        vbTrolleyPage = new VBox(15,btnColor, laPageTitle, taTrolley, hbBtns);
         vbTrolleyPage.setPrefWidth(COLUMN_WIDTH);
         vbTrolleyPage.setAlignment(Pos.TOP_CENTER);
         vbTrolleyPage.setStyle("-fx-padding: 15px;");

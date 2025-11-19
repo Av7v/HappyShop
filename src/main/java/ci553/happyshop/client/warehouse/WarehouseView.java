@@ -50,19 +50,19 @@ import javafx.scene.input.MouseEvent;
  * The Warehouse interface (WarehouseView) contains two main pages:
  * a divider line is between the two pages
  * 1. Search Page:
- *    - The key data model for the search page is an observable product list.
- *    - This list is updated by the model when searching the database.
- *    - A ListView observes the product list. Whenever the list changes,
- *      the ListView automatically updates itself based on the specified cell factory.
- *
+ * - The key data model for the search page is an observable product list.
+ * - This list is updated by the model when searching the database.
+ * - A ListView observes the product list. Whenever the list changes,
+ * the ListView automatically updates itself based on the specified cell factory.
+ * <p>
  * 2. Product Form Page:
- *    - The form page contains a ComboBox for selecting between two actions:
- *      * Editing an existing product
- *      * Adding a new product to stock
- *    - Based on the ComboBox selection, one of two VBoxes will be shown:
- *      * EditProductVBox (for editing existing products), referred to as **EditChild** in the code
- *      * NewProductVBox (for adding new products), referred to as **NewProChild** in the code
- *    - Only one VBox (EditChild or NewProChild) is active and visible at a time, depending on the selected action.
+ * - The form page contains a ComboBox for selecting between two actions:
+ * * Editing an existing product
+ * * Adding a new product to stock
+ * - Based on the ComboBox selection, one of two VBoxes will be shown:
+ * * EditProductVBox (for editing existing products), referred to as **EditChild** in the code
+ * * NewProductVBox (for adding new products), referred to as **NewProChild** in the code
+ * - Only one VBox (EditChild or NewProChild) is active and visible at a time, depending on the selected action.
  */
 
 public class WarehouseView {
@@ -72,7 +72,8 @@ public class WarehouseView {
 
     public WarehouseController controller;
     private Stage viewWindow;
-    /** A reference to the main window that is used to get its bounds (position and size).
+    /**
+     * A reference to the main window that is used to get its bounds (position and size).
      * This allows us to position other windows (like the History window or alert) relative to the Warehouse window.
      * It helps in keeping the UI layout consistent by placing new windows near the Warehouse window.
      */
@@ -88,12 +89,13 @@ public class WarehouseView {
     private VBox vbEditProduct; //the seceond child
     private VBox vbNewProduct; //another second child
     String theProFormMode = "EDIT";
-    /** productFormPage has two children at a time,
+    /**
+     * productFormPage has two children at a time,
      * 1. cbProductFormMode: A ComboBox that holds two action types for the product form:
-     *    - "EDIT": For editing an existing product
-     *    - "NEW": For adding a new product to stock
+     * - "EDIT": For editing an existing product
+     * - "NEW": For adding a new product to stock
      * The action mode (either "EDIT" or "NEW") is stored in the 'theProFormMode' variable to keep track of the current mode.
-     *
+     * <p>
      * The following two second childeren swap based on the selected value of the ComboBox:
      * 2. vbEditProduct: contains the UI elements for editing an existing product (visible when "EDIT" is selected)
      * 2. vbNewProduct: contains the UI elements for adding a new product to stock (visible when "NEW" is selected)
@@ -108,17 +110,20 @@ public class WarehouseView {
     private ImageView ivProEdit;
     String userSelectedImageUriEdit;
     boolean isUserSelectedImageEdit = false;
-    /** userSelectedImageUriEdit: URI of the image selected by the user during editing.
+    /**
+     * userSelectedImageUriEdit: URI of the image selected by the user during editing.
      * This value is retrieved from the image chooser when the user selects or changes the image for an existing product.
-     *
+     * <p>
      * isUserSelectedImageEdit: A flag indicating if the user has selected a new image for editing an existing product.
      * This helps the model determine if the old image should be deleted and the new image copied to the destination folder.
      */
+    private Button btnColor;
     private Button btnAdd;
     private Button btnSub;
     private Button btnCancelEdit;
     private Button btnSubmitEdit;
-    /** Normally, buttons are not kept as instance variables. However, in this case,
+    /**
+     * Normally, buttons are not kept as instance variables. However, in this case,
      * btnAdd, btnSub, btnCancelEdit, and btnSubmitEdit:
      * They are kept as instance variables to manage their states (enabled/disabled) when necessary,
      * eg. when the Cancel or Submit buttons are clicked, to prevent unintended interactions.
@@ -136,6 +141,9 @@ public class WarehouseView {
     Media sound;
     MediaPlayer mediaPlayer;
 
+
+    private String style = UIStyle.rootStyleWarehouseColorful;
+
     public void start(Stage window) {
         sound = new Media(new File("src/main/resources/select-button-ui-395763.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(sound);
@@ -152,7 +160,7 @@ public class WarehouseView {
 
         //top level layout manager
         HBox hbRoot = new HBox(15, vbSearchPage, lineContainer, vbProductFormPage);
-        hbRoot.setStyle(UIStyle.rootStyleWarehouse);
+        hbRoot.setStyle(style);
 
         Scene scene = new Scene(hbRoot, WIDTH, HEIGHT);
         window.setScene(scene);
@@ -273,7 +281,7 @@ public class WarehouseView {
         vbNewProduct = createNewProductChild();
 
         // Initially set the second child (after ComboBox) to editProduct
-        VBox vbProductFormPage = new VBox(10, cbProductFormMode, vbEditProduct);
+        VBox vbProductFormPage = new VBox(10,btnColor, cbProductFormMode, vbEditProduct);
 
         // Check selected value and place the corerect child
         //isImageNameEditable for imageChooser using a single method to differciate from edit/add product
@@ -342,6 +350,23 @@ public class WarehouseView {
         tfChangeByEdit = new TextField();
         tfChangeByEdit.setPromptText("change by");
         tfChangeByEdit.setStyle("-fx-font-size: 14px; -fx-pref-width: 50px;");
+
+
+//        //color button
+        btnColor = new Button("Change Theme");
+        btnColor.setStyle(UIStyle.grayFillBtnStyle);
+        btnColor.setPrefWidth(150);
+        btnColor.setOnAction(e -> {
+            if (style.equals(UIStyle.rootStyleWarehouseColorful)) {
+                style = UIStyle.rootStyleWarehouseDark;
+            } else if (style.equals(UIStyle.rootStyleWarehouseDark)) {
+                style = UIStyle.rootStyleWarehouseLight;
+            } else {
+                style = UIStyle.rootStyleWarehouseColorful;
+            }
+            viewWindow.getScene().getRoot().setStyle(style);
+        });
+
 
         // Add and Subtract Buttons for changing stock
         btnAdd = new Button("➕");
