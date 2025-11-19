@@ -9,13 +9,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
-import java.io.File;
 /**
  * while an alert is showing,
  * the JavaFX application is blocked by the modal nature of the alert,
@@ -50,8 +46,7 @@ public class AlertSimulator {
     private  Scene scene; // Scene for AlertSimulator
     private  Label laErrorMsg;// Label to display error messages
     private TextArea taErrorMsg;// Label to display error messages
-    private Media sound;
-    private MediaPlayer mediaPlayer;
+
     // Create the Scene (only once)
     private  void createScene() {
         Label laTitle = new Label("\u26A0 Please fix input errors..."); // for emoji ⚠️
@@ -85,9 +80,7 @@ public class AlertSimulator {
         if (scene == null) {
             createScene();  //create scene if not exists
         }
-        if(sound == null){
-            createSound();
-        }
+
         window = new Stage();
         window.initModality(Modality.NONE); //Optional: explicitly set as non-blocking, though this is the default
         window.initStyle(StageStyle.UNDECORATED); // No title bar
@@ -101,17 +94,13 @@ public class AlertSimulator {
         window.setY(bounds.y + UIStyle.HistoryWinHeight+30);
         window.show();
     }
-        private void createSound() {
-        sound = new Media(new File("src/main/resources/mixkit-correct-answer-tone-2870.wav").toURI().toString());
-        mediaPlayer = new MediaPlayer(sound);
-    }
+
     // Show error message in the alert window
     public  void showErrorMsg(String errorMsg) {
         if (window ==null ||!window.isShowing() ) {
             createWindow(); // create window if not exists
         }
-        mediaPlayer.stop();
-        mediaPlayer.play();
+
         //laErrorMsg.setText(errorMsg); // Update the error message
         taErrorMsg.setText(errorMsg); // Update the error message
         window.toFront(); // Bring the window to the front if it's already open

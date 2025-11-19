@@ -7,11 +7,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -19,14 +16,14 @@ import java.io.IOException;
  * It contains two root views:
  * 1. vbOrderMapRoot - the default view, displaying available orders awaiting assignment.
  * 2. vbOrderDetailRoot - displayed once a picker is assigned an order, allowing them to view
- * and prepare the order.
- * <p>
+ *    and prepare the order.
+ *
  * The window initially shows the orderMapRoot.
  * Once an order is assigned to a picker,the view switches to orderDetailToot.
  * The view switches to orderMapRoot for the next task after the order is prepared and collected by customer.
  */
 
-public class PickerView {
+public class PickerView  {
     public PickerController pickerController;
 
     private final int WIDTH = UIStyle.pickerWinWidth;
@@ -38,25 +35,20 @@ public class PickerView {
 
     //Three controllers needs updating when program going on
     private TextArea taOrderMap = new TextArea();
-    // TextArea for displaying a list of orders and their states(orderId → state)
+          // TextArea for displaying a list of orders and their states(orderId → state)
     private TextArea taOrderDetail = new TextArea();
-    // TextArea for displaying detailed information about the selected order after it is assigned to the picker.
+        // TextArea for displaying detailed information about the selected order after it is assigned to the picker.
     private Label laDetailRootTitle;
-    // Label used as the title for the Order Detail section.
-    // Reminds the picker not to close the window if the order hasn't been collected by the customer.
-
-    Media sound ;
-    MediaPlayer mediaPlayer;
+       // Label used as the title for the Order Detail section.
+       // Reminds the picker not to close the window if the order hasn't been collected by the customer.
 
     public void start(Stage window) {
-        sound = new Media(new File("src/main/resources/select-button-ui-395763.mp3").toURI().toString());
-        mediaPlayer = new MediaPlayer(sound);
         vbOrderMapRoot = createOrderMapRoot();
         vbOrderDetailRoot = createOrderDetailRoot();
         scene = new Scene(vbOrderMapRoot, WIDTH, HEIGHT);
         window.setScene(scene);
         window.setTitle("🛒 HappyShop Order Picker");
-        WinPosManager.registerWindow(window, WIDTH, HEIGHT); //calculate position x and y for this window
+        WinPosManager.registerWindow(window,WIDTH,HEIGHT); //calculate position x and y for this window
         window.show();
 
         // Set the window close request to prevent closing if the order is not collected
@@ -108,8 +100,6 @@ public class PickerView {
     }
 
     private void buttonClicked(ActionEvent event) {
-        mediaPlayer.stop();
-        mediaPlayer.play();
         Button button = (Button) event.getSource();
         String btnText = button.getText();
         try {

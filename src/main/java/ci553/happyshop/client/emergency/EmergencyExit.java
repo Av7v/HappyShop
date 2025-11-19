@@ -43,7 +43,7 @@ public class EmergencyExit {
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(btnExit);
 
-        borderPane.setStyle(UIStyle.rootStyleColorful);
+        borderPane.setStyle(UIStyle.rootStyle);
         Scene scene = new Scene(borderPane, WIDTH, HEIGHT);
         Stage window = new Stage();
         window.setScene(scene);

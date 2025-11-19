@@ -11,25 +11,22 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
 /**
  * The CustomerView is separated into two sections by a line :
- * <p>
+ *
  * 1. Search Page – Always visible, allowing customers to browse and search for products.
  * 2. the second page – display either the Trolley Page or the Receipt Page
- * depending on the current context. Only one of these is shown at a time.
+ *    depending on the current context. Only one of these is shown at a time.
  */
 
-public class CustomerView {
+public class CustomerView  {
     public CustomerController cusController;
 
     private final int WIDTH = UIStyle.customerWinWidth;
@@ -52,13 +49,8 @@ public class CustomerView {
     // Holds a reference to this CustomerView window for future access and management
     // (e.g., positioning the removeProductNotifier when needed).
     private Stage viewWindow;
-    private Media sound;
-    private MediaPlayer mediaPlayer;
-    private String style =UIStyle.rootStyleColorful;
 
     public void start(Stage window) {
-        sound = new Media(new File("src/main/resources/select-button-ui-395763.mp3").toURI().toString());
-        mediaPlayer = new MediaPlayer(sound);
         VBox vbSearchPage = createSearchPage();
         vbTrolleyPage = CreateTrolleyPage();
         vbReceiptPage = createReceiptPage();
@@ -73,14 +65,14 @@ public class CustomerView {
 
         hbRoot = new HBox(10, vbSearchPage, lineContainer, vbTrolleyPage); //initialize to show trolleyPage
         hbRoot.setAlignment(Pos.CENTER);
-        hbRoot.setStyle(UIStyle.rootStyleColorful);
+        hbRoot.setStyle(UIStyle.rootStyle);
 
         Scene scene = new Scene(hbRoot, WIDTH, HEIGHT);
         window.setScene(scene);
         window.setTitle("🛒 HappyShop Customer Client");
-        WinPosManager.registerWindow(window, WIDTH, HEIGHT); //calculate position x and y for this window
+        WinPosManager.registerWindow(window,WIDTH,HEIGHT); //calculate position x and y for this window
         window.show();
-        viewWindow = window;// Sets viewWindow to this window for future reference and management.
+        viewWindow=window;// Sets viewWindow to this window for future reference and management.
     }
 
     private VBox createSearchPage() {
@@ -101,14 +93,14 @@ public class CustomerView {
         tfName.setStyle(UIStyle.textFiledStyle);
         HBox hbName = new HBox(10, laName, tfName);
 
-        Label laPlaceHolder = new Label(" ".repeat(15)); //create left-side spacing so that this HBox aligns with others in the layout.
+        Label laPlaceHolder = new Label(  " ".repeat(15)); //create left-side spacing so that this HBox aligns with others in the layout.
         Button btnSearch = new Button("Search");
         btnSearch.setStyle(UIStyle.buttonStyle);
         btnSearch.setOnAction(this::buttonClicked);
         Button btnAddToTrolley = new Button("Add to Trolley");
         btnAddToTrolley.setStyle(UIStyle.buttonStyle);
         btnAddToTrolley.setOnAction(this::buttonClicked);
-        HBox hbBtns = new HBox(10, laPlaceHolder, btnSearch, btnAddToTrolley);
+        HBox hbBtns = new HBox(10, laPlaceHolder,btnSearch, btnAddToTrolley);
 
         ivProduct = new ImageView("imageHolder.jpg");
         ivProduct.setFitHeight(60);
@@ -132,25 +124,12 @@ public class CustomerView {
     }
 
     private VBox CreateTrolleyPage() {
-        Button btnColor = new Button("Change Theme");
-        btnColor.setStyle(UIStyle.grayFillBtnStyle);
-        btnColor.setPrefWidth(150);
-        btnColor.setOnAction(e -> {
-            if (style.equals(UIStyle.rootStyleColorful)) {
-                style = UIStyle.rootStyleDark;
-            } else if (style.equals(UIStyle.rootStyleDark)) {
-                style = UIStyle.rootStyleLight;
-            } else {
-                style = UIStyle.rootStyleColorful;
-            }
-            viewWindow.getScene().getRoot().setStyle(style);
-        });
         Label laPageTitle = new Label("🛒🛒  Trolley 🛒🛒");
         laPageTitle.setStyle(UIStyle.labelTitleStyle);
 
         taTrolley = new TextArea();
         taTrolley.setEditable(false);
-        taTrolley.setPrefSize(WIDTH / 2, HEIGHT - 50);
+        taTrolley.setPrefSize(WIDTH/2, HEIGHT-50);
 
         Button btnCancel = new Button("Cancel");
         btnCancel.setOnAction(this::buttonClicked);
@@ -160,11 +139,11 @@ public class CustomerView {
         btnCheckout.setOnAction(this::buttonClicked);
         btnCheckout.setStyle(UIStyle.buttonStyle);
 
-        HBox hbBtns = new HBox(10, btnCancel, btnCheckout);
+        HBox hbBtns = new HBox(10, btnCancel,btnCheckout);
         hbBtns.setStyle("-fx-padding: 15px;");
         hbBtns.setAlignment(Pos.CENTER);
 
-        vbTrolleyPage = new VBox(15,btnColor, laPageTitle, taTrolley, hbBtns);
+        vbTrolleyPage = new VBox(15, laPageTitle, taTrolley, hbBtns);
         vbTrolleyPage.setPrefWidth(COLUMN_WIDTH);
         vbTrolleyPage.setAlignment(Pos.TOP_CENTER);
         vbTrolleyPage.setStyle("-fx-padding: 15px;");
@@ -177,7 +156,7 @@ public class CustomerView {
 
         taReceipt = new TextArea();
         taReceipt.setEditable(false);
-        taReceipt.setPrefSize(WIDTH / 2, HEIGHT - 50);
+        taReceipt.setPrefSize(WIDTH/2, HEIGHT-50);
 
         Button btnCloseReceipt = new Button("OK & Close"); //btn for closing receipt and showing trolley page
         btnCloseReceipt.setStyle(UIStyle.buttonStyle);
@@ -193,20 +172,18 @@ public class CustomerView {
 
 
     private void buttonClicked(ActionEvent event) {
-        try {
-            mediaPlayer.stop();
-            mediaPlayer.play();
-            Button btn = (Button) event.getSource();
+        try{
+            Button btn = (Button)event.getSource();
             String action = btn.getText();
-            if (action.equals("Add to Trolley")) {
+            if(action.equals("Add to Trolley")){
                 showTrolleyOrReceiptPage(vbTrolleyPage); //ensure trolleyPage shows if the last customer did not close their receiptPage
             }
-            if (action.equals("OK & Close")) {
+            if(action.equals("OK & Close")){
                 showTrolleyOrReceiptPage(vbTrolleyPage);
             }
             cusController.doAction(action);
-
-        } catch (SQLException e) {
+        }
+        catch(SQLException e){
             e.printStackTrace();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -236,6 +213,6 @@ public class CustomerView {
 
     WindowBounds getWindowBounds() {
         return new WindowBounds(viewWindow.getX(), viewWindow.getY(),
-                viewWindow.getWidth(), viewWindow.getHeight());
+                  viewWindow.getWidth(), viewWindow.getHeight());
     }
 }
