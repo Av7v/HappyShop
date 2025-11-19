@@ -24,10 +24,8 @@ public class CustomerModel {
     public CustomerView cusView;
     public DatabaseRW databaseRW; //Interface type, not specific implementation
                                   //Benefits: Flexibility: Easily change the database implementation.
-    public RemoveProductNotifier removeProductNotifier;
 
-    private ArrayList<Product> products =null; // Array list of found products
-    private Product theProduct = null;
+    private Product theProduct =null; // product found from search
     private ArrayList<Product> trolley =  new ArrayList<>(); // a list of products in trolley
 
     // Four UI elements to be passed to CustomerView for display updates.
@@ -38,7 +36,6 @@ public class CustomerModel {
 
     //SELECT productID, description, image, unitPrice,inStock quantity
     void search() throws SQLException {
-        theProduct = null;
         String productId = cusView.tfId.getText().trim();
         if(!productId.isEmpty()){
             theProduct = databaseRW.searchByProductId(productId); //search database
@@ -66,14 +63,14 @@ public class CustomerModel {
     }
 
     void addToTrolley(){
-        if(theProduct != null){
+        if(theProduct!= null){
             // trolley.add(theProduct) — Product is appended to the end of the trolley.
             // Check if product already exists in trolley
             boolean found = false;
             for (Product p : trolley) {
                 if (p.getProductId().equals(theProduct.getProductId())) {
                     // Merge items with the same product ID (combining their quantities).
-                    p.setOrderedQuantity(p.getOrderedQuantity() + 1);
+                    p.setOrderedQuantity(p.getOrderedQuantity() + theProduct.getOrderedQuantity());
                     found = true;
                     break;
                 }
@@ -91,7 +88,7 @@ public class CustomerModel {
             displayLaSearchResult = "Please search for an available product before adding it to the trolley";
             System.out.println("must search and get an available product before add to trolley");
         }
-        displayTaReceipt="";// Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
+        displayTaReceipt=""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
         updateView();
     }
 
@@ -129,14 +126,13 @@ public class CustomerModel {
                 }
                 theProduct=null;
 
-                // Remove products with insufficient stock from trolley
-                for (Product p : insufficientProducts) {
-                    trolley.remove(p);
-                }
-                // Update trolley display
-                displayTaTrolley = ProductListFormatter.buildString(trolley);
-                removeProductNotifier.showRemovalMsg(errorMsg.toString());
-
+                //TODO
+                // Add the following logic here:
+                // 1. Remove products with insufficient stock from the trolley.
+                // 2. Trigger a message window to notify the customer about the insufficient stock, rather than directly changing displayLaSearchResult.
+                //You can use the provided RemoveProductNotifier class and its showRemovalMsg method for this purpose.
+                //remember close the message window where appropriate (using method closeNotifierWindow() of RemoveProductNotifier class)
+                displayLaSearchResult = "Checkout failed due to insufficient stock for the following products:\n" + errorMsg.toString();
                 System.out.println("stock is not enough");
             }
         }
@@ -160,10 +156,8 @@ public class CustomerModel {
                 existing.setOrderedQuantity(existing.getOrderedQuantity() + p.getOrderedQuantity());
             } else {
                 // Make a shallow copy to avoid modifying the original
-                Product toAdd = new Product(p.getProductId(),p.getProductDescription(),
-                        p.getProductImageName(),p.getUnitPrice(),p.getStockQuantity());
-                toAdd.setOrderedQuantity(p.getOrderedQuantity());
-                grouped.put(id,toAdd);
+                grouped.put(id,new Product(p.getProductId(),p.getProductDescription(),
+                        p.getProductImageName(),p.getUnitPrice(),p.getStockQuantity()));
             }
         }
         return new ArrayList<>(grouped.values());
