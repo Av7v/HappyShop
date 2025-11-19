@@ -9,16 +9,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 /**
  * The RemoveProductNotifier class provides a dependent window that displays messages
  * and suggested actions to the customer when certain products are removed from their trolley.
- *
+ * <p>
  * It is triggered by the CustomerModel when the customer submits a trolley that includes
  * products exceeding available stock.
- *
+ * <p>
  * This window tracks the position of the main CustomerView window to appear nearby,
  * maintaining a cohesive and user-friendly interface.
  */
@@ -40,6 +44,8 @@ public class RemoveProductNotifier {
     private Stage window; //window for ProductRemovalNotifier
     private Scene scene; // Scene for ProductRemovalNotifier
     private TextArea taRemoveMsg;// TextArea to display removal products messages
+    private Media sound;
+    private MediaPlayer mediaPlayer;
 
     // Create the Scene (only once)
     private void createScene() {
@@ -79,13 +85,13 @@ public class RemoveProductNotifier {
         scene = new Scene(pane, WIDTH, HEIGHT);
     }
 
-    private String cutomerActionBuilder(){
+    private String cutomerActionBuilder() {
         StringBuilder actions = new StringBuilder(" \u26A1 You can now: \n");
         actions.append("\u2022 Checkout your trolley as it is \n");
         actions.append("\u2022 Re-add the removed products (up to the available quantity) \n");
         actions.append("\u2022 Or cancel your trolley if you no longer wish to proceed.\n");
         actions.append("Thank you for understanding! \n");
-        return  actions.toString();
+        return actions.toString();
     }
 
     // Create the window if not exists
@@ -93,6 +99,9 @@ public class RemoveProductNotifier {
     private void createWindow() {
         if (scene == null) {
             createScene();  //create scene if not exists
+        }
+        if(sound == null){
+            createSound();
         }
 
         window = new Stage();
@@ -103,17 +112,23 @@ public class RemoveProductNotifier {
         //get bounds of betterCustomer window which trigers the ProductRemovalNotifier
         // so that we can put the ProductRemovalNotifier at a suitable position
         WindowBounds bounds = cusView.getWindowBounds();
-        window.setX(bounds.x + bounds.width -WIDTH -10); // Position to the right of warehouse window
+        window.setX(bounds.x + bounds.width - WIDTH - 10); // Position to the right of warehouse window
         window.setY(bounds.y + bounds.height / 2 + 40);
         window.show();
     }
 
+    private void createSound() {
+        sound = new Media(new File("src/main/resources/mixkit-correct-answer-tone-2870.wav").toURI().toString());
+        mediaPlayer = new MediaPlayer(sound);
+    }
+
     // Show remove product message
     public void showRemovalMsg(String removalMsg) {
-        if (window ==null ||!window.isShowing() ) {
+        if (window == null || !window.isShowing()) {
             createWindow(); // create window if not exists
         }
-
+        mediaPlayer.stop();
+        mediaPlayer.play();
         taRemoveMsg.setText(removalMsg); // Update the error message
         window.toFront(); // Bring the window to the front if it's already open
     }
