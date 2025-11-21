@@ -36,3 +36,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/happyShopDB/
+/images/
+/images_resetDB/
+*.log
