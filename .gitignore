@@ -40,3 +40,4 @@ build/
 /images/
 /images_resetDB/
 *.log
+/orders/
