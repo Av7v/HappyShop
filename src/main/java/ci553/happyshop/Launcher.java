@@ -1,7 +1,10 @@
 package ci553.happyshop;
 
 import ci553.happyshop.client.Main;
+import ci553.happyshop.systemSetup.SetOrderFileSystem;
 import javafx.application.Application;
+
+import java.io.IOException;
 
 /**
  * The Launcher class serves as the main entry point of the system.
@@ -19,7 +22,8 @@ public class Launcher  {
      * It launches the Main JavaFX application.
      * @param args Command line arguments.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        SetOrderFileSystem.main(args);
         Application.launch(Main.class, args);  // Starts the JavaFX application through Main
     }
 }

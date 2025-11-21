@@ -1,0 +1,10 @@
+Order ID: 1 
+State: Collected
+OrderedDateTime: 2025-11-21 17:07:53 
+ProgressingDateTime: 2025-11-21 17:07:58
+CollectedDateTime: 2025-11-21 17:07:59
+Items:
+ 1122    123                ( 1) £  12.00
+--------------------------------------------
+ Total                               £  12.00
+
