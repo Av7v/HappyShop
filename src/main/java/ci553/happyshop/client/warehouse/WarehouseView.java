@@ -287,11 +287,11 @@ public class WarehouseView {
         //isImageNameEditable for imageChooser using a single method to differciate from edit/add product
         cbProductFormMode.setOnAction(actionEvent -> {
             if (cbProductFormMode.getValue().equals("Edit Existing Product in Stock")) {
-                vbProductFormPage.getChildren().set(1, vbEditProduct);
+                vbProductFormPage.getChildren().set(2, vbEditProduct);
                 theProFormMode = "EDIT";
             }
             if (cbProductFormMode.getValue().equals("Add New Product to Stock")) {
-                vbProductFormPage.getChildren().set(1, vbNewProduct);
+               vbProductFormPage.getChildren().set(2, vbNewProduct);
                 theProFormMode = "NEW";
             }
         });

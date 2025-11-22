@@ -50,11 +50,11 @@ public class Main extends Application {
         mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.setVolume(0.3);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaPlayer.play();
+//        mediaPlayer.play();
 
-        startCustomerClient();
-        startPickerClient();
-        startOrderTracker();
+//        startCustomerClient();
+//        startPickerClient();
+//        startOrderTracker();
 
         // Initializes the order map for the OrderHub. This must be called after starting the observer clients
         // (such as OrderTracker and Picker clients) to ensure they are properly registered for receiving updates.
