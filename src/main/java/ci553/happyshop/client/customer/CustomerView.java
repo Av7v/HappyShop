@@ -64,6 +64,7 @@ public class CustomerView {
     private String style =UIStyle.rootStyleColorful;
     private ObservableList<Product> obeProductList; //observable product list
     ListView<Product> obrLvProducts;
+    Label laPlaceHolder;
 
     public void start(Stage window) {
         sound = new Media(new File("src/main/resources/select-button-ui-395763.mp3").toURI().toString());
@@ -95,14 +96,6 @@ public class CustomerView {
     private VBox createSearchPage() {
         Label laPageTitle = new Label("Search by Product ID/Name");
         laPageTitle.setStyle(UIStyle.labelTitleStyle);
-
-        Label laId = new Label("ID:      ");
-        laId.setStyle(UIStyle.labelStyle);
-        tfId = new TextField();
-        tfId.setPromptText("eg. 0001");
-        tfId.setStyle(UIStyle.textFiledStyle);
-        HBox hbId = new HBox(10, laId, tfId);
-
         Label laName = new Label("Name:");
         laName.setStyle(UIStyle.labelStyle);
         tfName = new TextField();
@@ -110,11 +103,12 @@ public class CustomerView {
         tfName.setStyle(UIStyle.textFiledStyle);
         HBox hbName = new HBox(10, laName, tfName);
 
-        Label laPlaceHolder = new Label(" ".repeat(15)); //create left-side spacing so that this HBox aligns with others in the layout.
-        Button btnSearch = new Button("Search");
+        laPlaceHolder = new Label("Search Summary");
+        laPlaceHolder.setStyle(UIStyle.labelStyle); //create left-side spacing so that this HBox aligns with others in the layout.
+        Button btnSearch = new Button("🔍");
         btnSearch.setStyle(UIStyle.buttonStyle);
         btnSearch.setOnAction(this::buttonClicked);
-        Button btnAddToTrolley = new Button("Add to Trolley");
+        Button btnAddToTrolley = new Button("Add");
         btnAddToTrolley.setStyle(UIStyle.buttonStyle);
         btnAddToTrolley.setOnAction(this::buttonClicked);
         HBox hbBtns = new HBox(10, laPlaceHolder, btnSearch, btnAddToTrolley);
@@ -172,7 +166,7 @@ public class CustomerView {
             }
         });
 
-        VBox vbSearchPage = new VBox(15, laPageTitle, hbId, hbName, hbBtns, obrLvProducts);
+        VBox vbSearchPage = new VBox(15, laPageTitle, hbName, hbBtns, obrLvProducts);
         vbSearchPage.setPrefWidth(COLUMN_WIDTH);
         vbSearchPage.setAlignment(Pos.TOP_CENTER);
         vbSearchPage.setStyle("-fx-padding: 15px;");
@@ -247,7 +241,7 @@ public class CustomerView {
             mediaPlayer.play();
             Button btn = (Button) event.getSource();
             String action = btn.getText();
-            if (action.equals("Add to Trolley" )&& obrLvProducts.getSelectionModel().getSelectedItem() != null) {
+            if (action.equals("Add" )&& obrLvProducts.getSelectionModel().getSelectedItem() != null) {
                 showTrolleyOrReceiptPage(vbTrolleyPage); //ensure trolleyPage shows if the last customer did not close their receiptPage
             }
             if (action.equals("OK & Close")) {
@@ -265,8 +259,8 @@ public class CustomerView {
     void updateObservableProductList(ArrayList<Product> productList) {
         int proCounter = productList.size();
         System.out.println(proCounter);
-//        laSearchSummary.setText(proCounter + " products found");
-//        laSearchSummary.setVisible(true);
+        laPlaceHolder.setText(proCounter + " products found");
+        laPlaceHolder.setVisible(true);
         obeProductList.clear();
         obeProductList.addAll(productList);
     }

@@ -8,10 +8,10 @@ public class CustomerController {
 
     public void doAction(String action) throws SQLException, IOException {
         switch (action) {
-            case "Search":
+            case "🔍":
                 cusModel.search();
                 break;
-            case "Add to Trolley":
+            case "Add":
                 cusModel.addToTrolley();
                 break;
             case "Cancel":
