@@ -40,9 +40,9 @@ public class CustomerModel {
     void search() throws SQLException {
         theProduct = null;
         String keyword = cusView.tfName.getText().trim();
-        if(!keyword.isEmpty()){
+        if (!keyword.isEmpty()) {
             products = databaseRW.searchProduct(keyword);
-            for(Product pro : products){
+            for (Product pro : products) {
                 theProduct = pro;
                 if (theProduct != null && theProduct.getStockQuantity() > 0) {
                     String productId = theProduct.getProductId();
@@ -61,8 +61,7 @@ public class CustomerModel {
                     System.out.println("No Product was found with keyword " + keyword);
                 }
             }
-        }
-        else {
+        } else {
             theProduct = null;
             displayLaSearchResult = "Please type a keyword";
             System.out.println("Please type a keyword.");
@@ -71,32 +70,32 @@ public class CustomerModel {
     }
 
     void addToTrolley() {
-            theProduct = cusView.obrLvProducts.getSelectionModel().getSelectedItem();
-            if (theProduct != null) {
+        theProduct = cusView.obrLvProducts.getSelectionModel().getSelectedItem();
+        if (theProduct != null) {
 //                 trolley.add(theProduct); //— Product is appended to the end of the trolley.
-                // Check if product already exists in trolley
-                boolean found = false;
-                for (Product p : trolley) {
-                    if (p.getProductId().equals(theProduct.getProductId())) {
-                        // Merge items with the same product ID (combining their quantities).
-                        p.setOrderedQuantity(p.getOrderedQuantity() + 1);
-                        found = true;
-                        break;
-                    }
+            // Check if product already exists in trolley
+            boolean found = false;
+            for (Product p : trolley) {
+                if (p.getProductId().equals(theProduct.getProductId())) {
+                    // Merge items with the same product ID (combining their quantities).
+                    p.setOrderedQuantity(p.getOrderedQuantity() + 1);
+                    found = true;
+                    break;
                 }
-                // If not found, add the product
-                if (!found) {
-                    trolley.add(theProduct);
-                }
-                // Sort trolley by product ID
-                trolley.sort((p1, p2) -> p1.getProductId().compareTo(p2.getProductId()));
-
-                displayTaTrolley = ProductListFormatter.buildString(trolley); //build a String for trolley so that we can show it
-            } else {
-                displayLaSearchResult = "Please search for an available product before adding it to the trolley";
-                System.out.println("must search and get an available product before add to trolley");
             }
-            displayTaReceipt = ""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
+            // If not found, add the product
+            if (!found) {
+                trolley.add(theProduct);
+            }
+            // Sort trolley by product ID
+            trolley.sort((p1, p2) -> p1.getProductId().compareTo(p2.getProductId()));
+
+            displayTaTrolley = ProductListFormatter.buildString(trolley); //build a String for trolley so that we can show it
+        } else {
+            displayLaSearchResult = "Please search for an available product before adding it to the trolley";
+            System.out.println("must search and get an available product before add to trolley");
+        }
+        displayTaReceipt = ""; // Clear receipt to switch back to trolleyPage (receipt shows only when not empty)
 
         updateView();
     }
@@ -184,18 +183,18 @@ public class CustomerModel {
 
     void updateView() {
         if (products != null) {
-//            imageName = theProduct.getProductImageName();
-//            String relativeImageUrl = StorageLocation.imageFolder + imageName; //relative file path, eg images/0001.jpg
-//            // Get the full absolute path to the image
-//            Path imageFullPath = Paths.get(relativeImageUrl).toAbsolutePath();
-//            imageName = imageFullPath.toUri().toString(); //get the image full Uri then convert to String
-//            System.out.println("Image absolute path: " + imageFullPath); // Debugging to ensure path is correct
-        cusView.updateObservableProductList(products);
+            imageName = theProduct.getProductImageName();
+            String relativeImageUrl = StorageLocation.imageFolder + imageName; //relative file path, eg images/0001.jpg
+            // Get the full absolute path to the image
+            Path imageFullPath = Paths.get(relativeImageUrl).toAbsolutePath();
+            imageName = imageFullPath.toUri().toString(); //get the image full Uri then convert to String
+            System.out.println("Image absolute path: " + imageFullPath); // Debugging to ensure path is correct
+            cusView.updateObservableProductList(products);
 
         } else {
             imageName = "imageHolder.jpg";
         }
-        cusView.update(imageName, displayLaSearchResult, displayTaTrolley, displayTaReceipt);
+        cusView.update(imageName, displayLaSearchResult, trolley, displayTaReceipt);
     }
     // extra notes:
     //Path.toUri(): Converts a Path object (a file or a directory path) to a URI object.

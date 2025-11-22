@@ -61,10 +61,13 @@ public class CustomerView {
     private Stage viewWindow;
     private Media sound;
     private MediaPlayer mediaPlayer;
-    private String style =UIStyle.rootStyleColorful;
+    private String style = UIStyle.rootStyleColorful;
     private ObservableList<Product> obeProductList; //observable product list
     ListView<Product> obrLvProducts;
+    private ObservableList<Product> trolleyObeProductList; //observable product list
+    ListView<Product> trolleyProducts;
     Label laPlaceHolder;
+    Label totalprice;
 
     public void start(Stage window) {
         sound = new Media(new File("src/main/resources/select-button-ui-395763.mp3").toURI().toString());
@@ -92,6 +95,16 @@ public class CustomerView {
         window.show();
         viewWindow = window;// Sets viewWindow to this window for future reference and management.
     }
+    private String calculateTotal(){
+        double total = 0;
+        if(trolleyObeProductList.size()!=0){
+            for(Product product: trolleyObeProductList){
+                total += product.getOrderedQuantity()*product.getUnitPrice();
+            }
+            return Double.toString(total);
+        }
+        else return "0";
+    }
 
     private VBox createSearchPage() {
         Label laPageTitle = new Label("Search by Product ID/Name");
@@ -112,7 +125,7 @@ public class CustomerView {
         Button btnSearch = new Button("🔍");
         btnSearch.setStyle(UIStyle.buttonStyle);
         btnSearch.setOnAction(this::buttonClicked);
-        HBox hbName = new HBox(10,tfName,btnSearch);
+        HBox hbName = new HBox(10, tfName, btnSearch);
 
         laPlaceHolder = new Label("Search Summary");
         laPlaceHolder.setStyle(UIStyle.labelStyle); //create left-side spacing so that this HBox aligns with others in the layout.
@@ -199,10 +212,54 @@ public class CustomerView {
         Label laPageTitle = new Label("🛒🛒  Trolley 🛒🛒");
         laPageTitle.setStyle(UIStyle.labelTitleStyle);
 
-        taTrolley = new TextArea();
-        taTrolley.setEditable(false);
-        taTrolley.setPrefSize(WIDTH / 2, HEIGHT - 50);
+        trolleyObeProductList = FXCollections.observableArrayList();
+        trolleyProducts = new ListView<>(trolleyObeProductList);//ListView proListView observes proList
+        trolleyProducts.setPrefHeight(HEIGHT - 100);
+        trolleyProducts.setFixedCellSize(50);
+        trolleyProducts.setStyle(UIStyle.listViewStyle);
+        /**
+         * When is setCellFactory() Needed?
+         * If you want to customize each row’s content (e.g.,images, buttons, labels, etc.).
+         * If you need special formatting (like colors or borders).
+         *
+         * When is setCellFactory() NOT Needed?
+         * Each row is just plain text without images or formatting.
+         */
+        trolleyProducts.setCellFactory(param -> new ListCell<Product>() {
+            @Override
+            protected void updateItem(Product product, boolean empty) {
+                super.updateItem(product, empty);
 
+                if (empty || product == null) {
+                    setGraphic(null);
+                    System.out.println("setCellFactory - empty item");
+                } else {
+                    String imageName = product.getProductImageName(); // Get image name (e.g. "0001.jpg")
+                    String relativeImageUrl = StorageLocation.imageFolder + imageName;
+                    // Get the full absolute path to the image
+                    Path imageFullPath = Paths.get(relativeImageUrl).toAbsolutePath();
+                    String imageFullUri = imageFullPath.toUri().toString();// Build the full image Uri
+
+                    ImageView ivPro;
+                    try {
+                        ivPro = new ImageView(new Image(imageFullUri, 50, 45, true, true)); // Attempt to load the product image
+                    } catch (Exception e) {
+                        // If loading fails, use a default image directly from the resources folder
+                        ivPro = new ImageView(new Image("imageHolder.jpg", 50, 45, true, true)); // Directly load from resources
+                    }
+
+                    Label laProToString = new Label(String.format("£%.2f, Quantity: %d \n%s",
+                            product.getUnitPrice(),
+                            product.getOrderedQuantity(),
+                            product.getProductDescription())); // Create a label for product details
+                    HBox hbox = new HBox(10, ivPro, laProToString); // Put ImageView and label in a horizontal layout
+                    setGraphic(hbox);  // Set the whole row content
+                }
+            }
+        });
+
+        totalprice = new Label("Total price: " + calculateTotal() + " £");
+        totalprice.setStyle(UIStyle.labelTitleStyle);
         Button btnCancel = new Button("Cancel");
         btnCancel.setOnAction(this::buttonClicked);
         btnCancel.setStyle(UIStyle.buttonStyle);
@@ -215,7 +272,7 @@ public class CustomerView {
         hbBtns.setStyle("-fx-padding: 15px;");
         hbBtns.setAlignment(Pos.CENTER);
 
-        vbTrolleyPage = new VBox(15,btnColor, laPageTitle, taTrolley, hbBtns);
+        vbTrolleyPage = new VBox(15, btnColor, laPageTitle, trolleyProducts,totalprice, hbBtns);
         vbTrolleyPage.setPrefWidth(COLUMN_WIDTH);
         vbTrolleyPage.setAlignment(Pos.TOP_CENTER);
         vbTrolleyPage.setStyle("-fx-padding: 15px;");
@@ -249,7 +306,7 @@ public class CustomerView {
             mediaPlayer.play();
             Button btn = (Button) event.getSource();
             String action = btn.getText();
-            if (action.equals("Add to trolley" )&& obrLvProducts.getSelectionModel().getSelectedItem() != null) {
+            if (action.equals("Add to trolley") && obrLvProducts.getSelectionModel().getSelectedItem() != null) {
                 showTrolleyOrReceiptPage(vbTrolleyPage); //ensure trolleyPage shows if the last customer did not close their receiptPage
             }
             if (action.equals("OK & Close")) {
@@ -272,11 +329,14 @@ public class CustomerView {
         obeProductList.clear();
         obeProductList.addAll(productList);
     }
-    public void update(String imageName, String searchResult, String trolley, String receipt) {
+
+    public void update(String imageName, String searchResult, ArrayList<Product> trolley, String receipt) {
 
         ivProduct.setImage(new Image(imageName));
         lbProductInfo.setText(searchResult);
-        taTrolley.setText(trolley);
+        trolleyObeProductList.clear();
+        trolleyObeProductList.addAll(trolley);
+        totalprice.setText("Total price: " + calculateTotal() + " £");
         if (!receipt.equals("")) {
             showTrolleyOrReceiptPage(vbReceiptPage);
             taReceipt.setText(receipt);
