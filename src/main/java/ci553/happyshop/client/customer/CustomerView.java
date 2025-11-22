@@ -96,22 +96,30 @@ public class CustomerView {
     private VBox createSearchPage() {
         Label laPageTitle = new Label("Search by Product ID/Name");
         laPageTitle.setStyle(UIStyle.labelTitleStyle);
-        Label laName = new Label("Name:");
-        laName.setStyle(UIStyle.labelStyle);
-        tfName = new TextField();
-        tfName.setPromptText("implement it if you want");
-        tfName.setStyle(UIStyle.textFiledStyle);
-        HBox hbName = new HBox(10, laName, tfName);
 
-        laPlaceHolder = new Label("Search Summary");
-        laPlaceHolder.setStyle(UIStyle.labelStyle); //create left-side spacing so that this HBox aligns with others in the layout.
+        tfName = new TextField();
+        tfName.setPromptText("eg.:0001 or tv");
+        tfName.setStyle(UIStyle.textFiledStyle);
+        tfName.setOnAction(actionEvent -> {
+            try {
+                cusController.doAction("🔍");  //pressing enter can also do search
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
         Button btnSearch = new Button("🔍");
         btnSearch.setStyle(UIStyle.buttonStyle);
         btnSearch.setOnAction(this::buttonClicked);
-        Button btnAddToTrolley = new Button("Add");
+        HBox hbName = new HBox(10,tfName,btnSearch);
+
+        laPlaceHolder = new Label("Search Summary");
+        laPlaceHolder.setStyle(UIStyle.labelStyle); //create left-side spacing so that this HBox aligns with others in the layout.
+        Button btnAddToTrolley = new Button("Add to trolley");
         btnAddToTrolley.setStyle(UIStyle.buttonStyle);
         btnAddToTrolley.setOnAction(this::buttonClicked);
-        HBox hbBtns = new HBox(10, laPlaceHolder, btnSearch, btnAddToTrolley);
+        HBox hbBtns = new HBox(20, laPlaceHolder, btnAddToTrolley);
 
         ivProduct = new ImageView("imageHolder.jpg");
         ivProduct.setFitHeight(60);
@@ -241,7 +249,7 @@ public class CustomerView {
             mediaPlayer.play();
             Button btn = (Button) event.getSource();
             String action = btn.getText();
-            if (action.equals("Add" )&& obrLvProducts.getSelectionModel().getSelectedItem() != null) {
+            if (action.equals("Add to trolley" )&& obrLvProducts.getSelectionModel().getSelectedItem() != null) {
                 showTrolleyOrReceiptPage(vbTrolleyPage); //ensure trolleyPage shows if the last customer did not close their receiptPage
             }
             if (action.equals("OK & Close")) {

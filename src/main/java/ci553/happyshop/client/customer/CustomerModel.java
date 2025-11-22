@@ -56,6 +56,7 @@ public class CustomerModel {
                     System.out.println(displayLaSearchResult);
                 } else {
                     theProduct = null;
+                    products.clear();
                     displayLaSearchResult = "No Product was found with keyword " + keyword;
                     System.out.println("No Product was found with keyword " + keyword);
                 }

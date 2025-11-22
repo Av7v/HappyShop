@@ -50,7 +50,7 @@ public class Main extends Application {
         mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.setVolume(0.3);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-//        mediaPlayer.play();
+        mediaPlayer.play();
 
         startCustomerClient();
         startPickerClient();

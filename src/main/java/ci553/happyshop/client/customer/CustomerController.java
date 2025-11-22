@@ -11,7 +11,7 @@ public class CustomerController {
             case "🔍":
                 cusModel.search();
                 break;
-            case "Add":
+            case "Add to trolley":
                 cusModel.addToTrolley();
                 break;
             case "Cancel":
