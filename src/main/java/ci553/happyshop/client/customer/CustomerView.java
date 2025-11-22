@@ -1,8 +1,12 @@
 package ci553.happyshop.client.customer;
 
+import ci553.happyshop.catalogue.Product;
+import ci553.happyshop.utility.StorageLocation;
 import ci553.happyshop.utility.UIStyle;
 import ci553.happyshop.utility.WinPosManager;
 import ci553.happyshop.utility.WindowBounds;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,7 +23,10 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * The CustomerView is separated into two sections by a line :
@@ -55,6 +62,8 @@ public class CustomerView {
     private Media sound;
     private MediaPlayer mediaPlayer;
     private String style =UIStyle.rootStyleColorful;
+    private ObservableList<Product> obeProductList; //observable product list
+    ListView<Product> obrLvProducts;
 
     public void start(Stage window) {
         sound = new Media(new File("src/main/resources/select-button-ui-395763.mp3").toURI().toString());
@@ -120,10 +129,50 @@ public class CustomerView {
         lbProductInfo.setWrapText(true);
         lbProductInfo.setMinHeight(Label.USE_PREF_SIZE);  // Allow auto-resize
         lbProductInfo.setStyle(UIStyle.labelMulLineStyle);
-        HBox hbSearchResult = new HBox(5, ivProduct, lbProductInfo);
-        hbSearchResult.setAlignment(Pos.CENTER_LEFT);
+        obeProductList = FXCollections.observableArrayList();
+        obrLvProducts = new ListView<>(obeProductList);//ListView proListView observes proList
+        obrLvProducts.setPrefHeight(HEIGHT - 100);
+        obrLvProducts.setFixedCellSize(50);
+        obrLvProducts.setStyle(UIStyle.listViewStyle);
+        /**
+         * When is setCellFactory() Needed?
+         * If you want to customize each row’s content (e.g.,images, buttons, labels, etc.).
+         * If you need special formatting (like colors or borders).
+         *
+         * When is setCellFactory() NOT Needed?
+         * Each row is just plain text without images or formatting.
+         */
+        obrLvProducts.setCellFactory(param -> new ListCell<Product>() {
+            @Override
+            protected void updateItem(Product product, boolean empty) {
+                super.updateItem(product, empty);
 
-        VBox vbSearchPage = new VBox(15, laPageTitle, hbId, hbName, hbBtns, hbSearchResult);
+                if (empty || product == null) {
+                    setGraphic(null);
+                    System.out.println("setCellFactory - empty item");
+                } else {
+                    String imageName = product.getProductImageName(); // Get image name (e.g. "0001.jpg")
+                    String relativeImageUrl = StorageLocation.imageFolder + imageName;
+                    // Get the full absolute path to the image
+                    Path imageFullPath = Paths.get(relativeImageUrl).toAbsolutePath();
+                    String imageFullUri = imageFullPath.toUri().toString();// Build the full image Uri
+
+                    ImageView ivPro;
+                    try {
+                        ivPro = new ImageView(new Image(imageFullUri, 50, 45, true, true)); // Attempt to load the product image
+                    } catch (Exception e) {
+                        // If loading fails, use a default image directly from the resources folder
+                        ivPro = new ImageView(new Image("imageHolder.jpg", 50, 45, true, true)); // Directly load from resources
+                    }
+
+                    Label laProToString = new Label(product.toString()); // Create a label for product details
+                    HBox hbox = new HBox(10, ivPro, laProToString); // Put ImageView and label in a horizontal layout
+                    setGraphic(hbox);  // Set the whole row content
+                }
+            }
+        });
+
+        VBox vbSearchPage = new VBox(15, laPageTitle, hbId, hbName, hbBtns, obrLvProducts);
         vbSearchPage.setPrefWidth(COLUMN_WIDTH);
         vbSearchPage.setAlignment(Pos.TOP_CENTER);
         vbSearchPage.setStyle("-fx-padding: 15px;");
@@ -198,7 +247,7 @@ public class CustomerView {
             mediaPlayer.play();
             Button btn = (Button) event.getSource();
             String action = btn.getText();
-            if (action.equals("Add to Trolley")) {
+            if (action.equals("Add to Trolley" )&& obrLvProducts.getSelectionModel().getSelectedItem() != null) {
                 showTrolleyOrReceiptPage(vbTrolleyPage); //ensure trolleyPage shows if the last customer did not close their receiptPage
             }
             if (action.equals("OK & Close")) {
@@ -213,7 +262,14 @@ public class CustomerView {
         }
     }
 
-
+    void updateObservableProductList(ArrayList<Product> productList) {
+        int proCounter = productList.size();
+        System.out.println(proCounter);
+//        laSearchSummary.setText(proCounter + " products found");
+//        laSearchSummary.setVisible(true);
+        obeProductList.clear();
+        obeProductList.addAll(productList);
+    }
     public void update(String imageName, String searchResult, String trolley, String receipt) {
 
         ivProduct.setImage(new Image(imageName));
