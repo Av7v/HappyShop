@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -101,7 +102,7 @@ public class CustomerView {
             for(Product product: trolleyObeProductList){
                 total += product.getOrderedQuantity()*product.getUnitPrice();
             }
-            return Double.toString(total);
+            return  String.format("%.2f",total);
         }
         else return "0";
     }
@@ -248,7 +249,8 @@ public class CustomerView {
                         ivPro = new ImageView(new Image("imageHolder.jpg", 50, 45, true, true)); // Directly load from resources
                     }
 
-                    Label laProToString = new Label(String.format("£%.2f, Quantity: %d \n%s",
+                    Label laProToString = new Label(String.format("id: %s, £%.2f, Quantity: %d \n%s",
+                            product.getProductId(),
                             product.getUnitPrice(),
                             product.getOrderedQuantity(),
                             product.getProductDescription())); // Create a label for product details
